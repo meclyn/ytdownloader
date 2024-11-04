@@ -27,21 +27,22 @@ def baixar_video_yt_dlp(link, formato, path):
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([link])
-        messagebox.showinfo("Sucesso", f"{formato} baixado com sucesso!")
     except Exception as e:
         messagebox.showerror("Erro", f"Ocorreu um erro: {e}")
 
 # Função chamada ao clicar no botão de download
 def baixar():
-    link = link_entry.get()  # Pega o link inserido pelo usuário
+    links = link_entry.get("1.0", "end").strip().split("\n")  # Pega os links e divide por linha
     formato = formato_var.get()  # Pega o formato escolhido
     path = filedialog.askdirectory()  # Permite que o usuário escolha o diretório de salvamento
 
-    if not link or not formato:
+    for link in links:  # Loop para cada link na lista
+        baixar_video_yt_dlp(link, formato, path)
+
+    if not any(links) or not formato:
         messagebox.showwarning("Aviso", "Por favor, insira o link do vídeo e escolha o formato.")
         return
 
-    baixar_video_yt_dlp(link, formato, path)
 
 # Criando a interface com Tkinter
 janela = ttk.Window(themename="darkly")
@@ -53,7 +54,7 @@ janela.resizable(False, False)
 # Label e entrada para o link do vídeo
 link_label = Label(janela, text="Link do vídeo:")
 link_label.pack(pady=10)
-link_entry = Entry(janela, width=50)
+link_entry = Text(janela, width=40, height=3)
 link_entry.pack(pady=5)
 
 # Opções de formato (MP3 ou MP4)
